@@ -117,6 +117,11 @@ __Prendre note que "name" et "href" doivent être alignés__
 
 4. Compilez votre projet pour générer la documentation sous forme de PDF. Il apparaitra dans le répertoire "_site_pdf"
 
+## Cause possibles d'erreur
+
+- Chemin d’accès au projet trop long
+- Redémarrer visual studio après l’installation de wkhtmltopdf
+
 
 Voici un exemple de fichier "docfx.json"
 
