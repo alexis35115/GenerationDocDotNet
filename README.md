@@ -8,63 +8,37 @@ Plusieurs outils permettent de générer une documentation statique en HTML à p
 
 ## Installation de DocFX
 
-Voici les commandes à exécuter pour installer les modules requis (à partir d'une console PowerShell avec droits administrateur)
-1. `choco install docfx -y` DocFX permet de générer la documentation statique en format HTML à partir de commentaires en XML dans le code
-2. `choco install wkhtmltopdf -y` wkhtmltopdf permet de convertir le format HTML en PDF
+DocFX permet de générer la documentation statique en format HTML à partir de commentaires en XML dans le code.
 
+Il y a plusieurs façons d'installer DocFX. Celle que nous utiliserons est [intégrée dans Visual Studio (NuGet)](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#3-use-docfx-integrated-with-visual-studio) et facilitera notre travail (NuGet).
+
+1. Créer un nouveau projet "C# Class Library".
+2. Clique droit sur le projet dans l’Explorateur de solution -> "Manage NuGet Packages...".
+3. Installer le package "DocFX.console", il s'ajoutera automatiquement au build target.
+4. On peut maintenant Build notre projet. La documentation au format HTML sera générée dans le répertoire "_site"
+
+
+On peut aussi installer DocFX comme [outil en ligne de commande](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#2-use-docfx-as-a-command-line-tool), ça impliquera cependant un peu plus de configuration.
 Il est également possible d'inclure la [génération sur un serveur de compilation](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#4-use-docfx-with-a-build-server), cette pratique est largement répandue dans le domaine.
+
+## Installation de wkhtmltopdf
+
+wkhtmltopdf permet de convertir le format HTML en PDF.
+
+À partir d'une console PowerShell avec droits administrateur:
+`choco install wkhtmltopdf -y`
 
 ## Étapes
 
-### Étapes 1 - documenter son code
+### Étapes 1 - Documenter son code
 
 Il faut savoir bien documenter son code! La qualité des commentaires augmentera l'utilité du site généré. Voici [quelques directives](https://docs.microsoft.com/fr-ca/dotnet/csharp/codedoc) à suivre pour bien documenter son code en .Net.
 
-### Étape 2 -  activer la génération du fichier XML qui contient les commentaires
-
-Pour activer la génération du site statique en HTML, double-cliquer sur le fichier ".csproj" et ajouter la balise :
-
-``` xml
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-```
-
-### Étapes 3 - générer la documentation PDF avec DocFX
+### Étapes 2 - Générer la documentation PDF avec DocFX
 
 Cette procédure expliquera comment générer un fichier PDF avec notre documentation.
 
-1. Ouvrir une invite de commandes Powershell à partir à partir de la racine de la solution
-2. Entrez la commande `docfx init -q`
-3. Naviguer dans le répertoire "docfx_project"
-4. Ouvrir le fichier "docfx.json" avec un éditeur de texte
-5. Remplacer la section "metadata" avec l'exemple ici-bas en __changant le nom des projets__
-
-```json
-"metadata": [
-    {
-      "src": [
-        {
-          "src": "../",
-          "files": [
-            "NOM_PROJET1/**.csproj",
-            "NOM_PROJET2/**.csproj"
-          ],
-          "exclude": [
-            "**/bin/**",
-            "**/obj/**",
-            "_site/**"
-          ]
-        }
-      ],
-      "dest": "api",
-      "disableGitFeatures": false,
-      "disableDefaultFilter": false
-    }
-  ]
-```
-
-6. Configurez la génération PDF en ajoutant sous la configuration "build", la configuration ici-bas :
+1. Configurez la génération PDF dans le fichiers docfx.json en ajoutant sous la configuration "build", la configuration ici-bas :
 
 ```json
  "pdf": {
@@ -74,32 +48,63 @@ Cette procédure expliquera comment générer un fichier PDF avec notre document
           "api/**.yml"
         ],
         "exclude": [
-          "**/toc.yml"
-        ]
-      },
-      {
-        "files": [ "articles/**/*.md", "*.md", "toc.yml"],
-        "exclude": [
           "**/toc.yml",
           "**/toc.md"
         ]
       },
       {
-        "files": [ "pdf/toc.yml"]
+        "files": [
+          "articles/**.md",
+          "articles/**/toc.yml",
+          "toc.yml",
+          "*.md",
+          "pdf/*"
+        ],
+        "exclude": [
+          "**/bin/**",
+          "**/obj/**",
+          "_site_pdf/**",
+          "**/toc.yml",
+          "**/toc.md"
+        ]
+      },
+      {
+        "files": "pdf/toc.yml"
       }
     ],
     "resource": [
       {
-        "files": [ "articles/images/**"]
+        "files": [
+          "images/**"
+        ],
+        "exclude": [
+          "**/bin/**",
+          "**/obj/**",
+          "_site_pdf/**"
+        ]
       }
     ],
-    "overwrite": "specs/*.md",
+    "overwrite": [
+      {
+        "files": [
+          "apidoc/**.md"
+        ],
+        "exclude": [
+          "**/bin/**",
+          "**/obj/**",
+          "_site_pdf/**"
+        ]
+      }
+    ],
+    "wkhtmltopdf": {
+      "additionalArguments": "--enable-local-file-access"
+    },
     "dest": "_site_pdf"
   }
 ```
 
-7. À la racine du répertoire "docfx_project" créez un répertoire "pdf"
-8. Créez un fichier "toc.yml" et copier les lignes suivantes :
+2. À la racine du projet, créer un répertoire "pdf"
+3. Dans ce dernier, créer un fichier "toc.yml" et copier les lignes suivantes :
 
 __Prendre note que "name" et "href" doivent être alignés__
 
@@ -110,8 +115,8 @@ __Prendre note que "name" et "href" doivent être alignés__
   href: ../api/toc.yml
 ```
 
-9. Pour générer la documentation PDF entrez la commande "docfx docfx.json" à la racine du répertoire "docfx_project" et le fichier PDF sera généré sous "_site_pdf"
-10. Pour générer le site web statique, entrez la commande "docfx docfx.json --serve" et naviguez à l'adresse "<http://localhost:8080/>"
+4. Compilez votre projet pour générer la documentation sous forme de PDF. Il apparaitra dans le répertoire "_site_pdf"
+
 
 Voici un exemple de fichier "docfx.json"
 
@@ -121,16 +126,10 @@ Voici un exemple de fichier "docfx.json"
     {
       "src": [
         {
-          "src": "../",
           "files": [
-            "AutreProjetPourGenerationDocumentation/**.csproj",
-            "ExempleGenerationDocumentation/**.csproj"
+            "**.csproj"
           ],
-          "exclude": [
-            "**/bin/**",
-            "**/obj/**",
-            "_site/**"
-          ]
+          "src": ""
         }
       ],
       "dest": "api",
@@ -193,26 +192,57 @@ Voici un exemple de fichier "docfx.json"
           "api/**.yml"
         ],
         "exclude": [
-          "**/toc.yml"
-        ]
-      },
-      {
-        "files": [ "articles/**/*.md", "*.md", "toc.yml"],
-        "exclude": [
           "**/toc.yml",
           "**/toc.md"
         ]
       },
       {
-        "files": [ "pdf/toc.yml"]
+        "files": [
+          "articles/**.md",
+          "articles/**/toc.yml",
+          "toc.yml",
+          "*.md",
+          "pdf/*"
+        ],
+        "exclude": [
+          "**/bin/**",
+          "**/obj/**",
+          "_site_pdf/**",
+          "**/toc.yml",
+          "**/toc.md"
+        ]
+      },
+      {
+        "files": "pdf/toc.yml"
       }
     ],
     "resource": [
       {
-        "files": [ "articles/images/**"]
+        "files": [
+          "images/**"
+        ],
+        "exclude": [
+          "**/bin/**",
+          "**/obj/**",
+          "_site_pdf/**"
+        ]
       }
     ],
-    "overwrite": "specs/*.md",
+    "overwrite": [
+      {
+        "files": [
+          "apidoc/**.md"
+        ],
+        "exclude": [
+          "**/bin/**",
+          "**/obj/**",
+          "_site_pdf/**"
+        ]
+      }
+    ],
+    "wkhtmltopdf": {
+      "additionalArguments": "--enable-local-file-access"
+    },
     "dest": "_site_pdf"
   }
 }
