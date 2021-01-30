@@ -1,14 +1,18 @@
 # Comment produire une documentation à partir des commentaires dans le code C\#
 
-Ce guide expliquera les différentes étapes comment générer une documentation à partir des commentaires en format XML dans du code C#.
+Ce guide expliquera les différentes étapes afin de générer une documentation PDF à partir des commentaires en format XML dans du code C#.
 
 ## Contexte
 
-Plusieurs outils permettent de générer une documentation à partir des commentaires en format XML dans notre code. Dans ce guide,l'outil [DocFX](https://dotnet.github.io/docfx/) sera utilisé, celui-ci permet de générer une documentation sous plusieurs formats la documentation du code.
+Plusieurs outils permettent de générer une documentation statique en HTML à partir des commentaires en format XML dans notre code. Dans ce guide,l'outil [DocFX](https://dotnet.github.io/docfx/) sera utilisé, celui-ci permet de générer une documentation sous plusieurs formats.
 
 ## Installation de DocFX
 
-DocFX est disponible en plusieurs formats, voici les commandes à exécuter pour installer les modules requis "choco install docfx -y" et "choco install wkhtmltopdf -y" (l'installation doit être exécutée à partir d'une console PowerShell en tant qu'administrateur). Il est également possible d'inclure la [génération sur un serveur de compilation](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#4-use-docfx-with-a-build-server), cette pratique est largement répandue dans le domaine.
+Voici les commandes à exécuter pour installer les modules requis (à partir d'une console PowerShell avec droits administrateur)
+1. `choco install docfx -y` DocFX permet de générer la documentation statique en format HTML à partir de commentaires en XML dans le code
+2. `choco install wkhtmltopdf -y` wkhtmltopdf permet de convertir le format HTML en PDF
+
+Il est également possible d'inclure la [génération sur un serveur de compilation](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#4-use-docfx-with-a-build-server), cette pratique est largement répandue dans le domaine.
 
 ## Étapes
 
@@ -18,7 +22,7 @@ Il faut savoir bien documenter son code! La qualité des commentaires augmentera
 
 ### Étape 2 -  activer la génération du fichier XML qui contient les commentaires
 
-Pour activer la génération du fichier XML, double-cliquer sur le fichier ".csproj" et ajouter la balise :
+Pour activer la génération du site statique en HTML, double-cliquer sur le fichier ".csproj" et ajouter la balise :
 
 ``` xml
   <PropertyGroup>
@@ -28,10 +32,10 @@ Pour activer la génération du fichier XML, double-cliquer sur le fichier ".csp
 
 ### Étapes 3 - générer la documentation PDF avec DocFX
 
-Cette procédure expliquera comment générer un fichier PDF avec notre documentation, mais prendre note qu'il existe d'autres formats.
+Cette procédure expliquera comment générer un fichier PDF avec notre documentation.
 
-1. Ouvrir une invite de commandes Powershell à partir à partir de la racine de la soluton
-2. Entrez la commande "docfx init -q"
+1. Ouvrir une invite de commandes Powershell à partir à partir de la racine de la solution
+2. Entrez la commande `docfx init -q`
 3. Naviguer dans le répertoire "docfx_project"
 4. Ouvrir le fichier "docfx.json" avec un éditeur de texte
 5. Remplacer la section "metadata" avec l'exemple ici-bas en __changant le nom des projets__
@@ -60,7 +64,7 @@ Cette procédure expliquera comment générer un fichier PDF avec notre document
   ]
 ```
 
-6. Configurez la génération PDF en ajoutant sous la configuration "build" la configuration ici-bas :
+6. Configurez la génération PDF en ajoutant sous la configuration "build", la configuration ici-bas :
 
 ```json
  "pdf": {
@@ -95,7 +99,7 @@ Cette procédure expliquera comment générer un fichier PDF avec notre document
 ```
 
 7. À la racine du répertoire "docfx_project" créez un répertoire "pdf"
-8. Créez un fichier "toc.yml" et copier ce contenu
+8. Créez un fichier "toc.yml" et copier les lignes suivantes :
 
 __Prendre note que "name" et "href" doivent être alignés__
 
@@ -106,7 +110,7 @@ __Prendre note que "name" et "href" doivent être alignés__
   href: ../api/toc.yml
 ```
 
-9. Pour générer la documentation PDF entrez la commande "docfx docfx.json" à la racine du répertoire "docfx_project" et le fichier PDF sera sous "_site_pdf"
+9. Pour générer la documentation PDF entrez la commande "docfx docfx.json" à la racine du répertoire "docfx_project" et le fichier PDF sera généré sous "_site_pdf"
 10. Pour générer le site web statique, entrez la commande "docfx docfx.json --serve" et naviguez à l'adresse "<http://localhost:8080/>"
 
 Voici un exemple de fichier "docfx.json"
