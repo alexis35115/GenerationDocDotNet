@@ -38,7 +38,7 @@ Il faut savoir bien documenter son code! La qualité des commentaires augmentera
 
 Cette procédure expliquera comment générer un fichier PDF avec notre documentation.
 
-1. Configurez la génération PDF dans le fichiers docfx.json en ajoutant sous la configuration "build", la configuration ici-bas :
+1. Configurer la génération PDF dans le fichiers docfx.json en ajoutant sous la configuration "build", la configuration ici-bas :
 
 ```json
  "pdf": {
@@ -115,12 +115,13 @@ __Prendre note que "name" et "href" doivent être alignés__
   href: ../api/toc.yml
 ```
 
-4. Compilez votre projet pour générer la documentation sous forme de PDF. Il apparaitra dans le répertoire "_site_pdf"
+4. Compiler le projet pour générer la documentation sous forme de PDF. Il apparaitra dans le répertoire "_site_pdf"
 
 ## Cause possibles d'erreur
 
-- Chemin d’accès au projet trop long
+- Chemin d’accès au projet trop long. Modifier l'emplacement du projet pour avoir un chemin d'accès plus court.
 - Redémarrer visual studio après l’installation de wkhtmltopdf
+- Could not load SDK resolver. Conflit entre vs 2017 et 2019. Désinstaller vs 2017 et réparer 2019. https://github.com/dotnet/docfx/issues/6162
 
 
 Voici un exemple de fichier "docfx.json"
