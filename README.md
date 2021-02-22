@@ -33,6 +33,7 @@ wkhtmltopdf permet de convertir le format HTML en PDF.
 ### Étapes 1 - Documenter son code
 
 Il faut savoir bien documenter son code! La qualité des commentaires augmentera l'utilité du site généré. Voici [quelques directives](https://docs.microsoft.com/fr-ca/dotnet/csharp/codedoc) à suivre pour bien documenter son code en .Net.
+Pour que la documentation d'une classe soit générée, cette dernière doit être "public".
 
 ### Étapes 2 - Générer la documentation PDF avec DocFX
 
@@ -122,6 +123,7 @@ __Prendre note que "name" et "href" doivent être alignés__
 - Chemin d’accès au projet trop long. Modifier l'emplacement du projet pour avoir un chemin d'accès plus court.
 - Redémarrer visual studio après l’installation de wkhtmltopdf
 - Could not load SDK resolver. Conflit entre vs 2017 et 2019. Désinstaller vs 2017 et réparer 2019. https://github.com/dotnet/docfx/issues/6162
+- Pour que la documentation d'une classe soit générée, cette dernière doit être "public".
 
 
 Voici un exemple de fichier "docfx.json"
